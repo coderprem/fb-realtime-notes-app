@@ -1,5 +1,6 @@
 package com.example.notes.task
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +8,22 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class TaskAdapter(private val tasks: List<TaskDataClass>): RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    private val onItemClickListener: ((TaskDataClass) -> Unit)? = null
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var firebaseDatabase: FirebaseDatabase
+    private var databaseReference: DatabaseReference
+    var onItemClickListener: ((TaskDataClass) -> Unit)? = null
+
+    init {
+        val currentUser = firebaseAuth.currentUser
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        databaseReference = firebaseDatabase.getReference("Users").child(currentUser?.uid.toString())
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.task_row, parent, false)
@@ -36,9 +49,13 @@ class TaskAdapter(private val tasks: List<TaskDataClass>): RecyclerView.Adapter<
                 when (menuItem.title) {
                     "Edit" -> {
                         // Open edit task screen
+                        val intent = Intent(holder.moreButton.context, AddTask::class.java)
+                        intent.putExtra("task", task)
+                        holder.moreButton.context.startActivity(intent)
                     }
                     "Delete" -> {
                         // Delete task
+                        databaseReference.child("Tasks").child(task.timeStamp.toString()).removeValue()
                     }
                 }
                 true

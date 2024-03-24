@@ -37,14 +37,33 @@ class AddTask : AppCompatActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference("Users").child(currentUser?.uid.toString())
 
-        // Set up the save button
-        binding.done.setOnClickListener {
-            val title = binding.taskTitle.text.toString()
-            val description = binding.taskDescription.text.toString()
-            val timeStamp = System.currentTimeMillis()
-            val task = TaskDataClass(title, description, timeStamp)
-            databaseReference.child("Tasks").push().setValue(task)
-            finish()
+        // intent to get the task data
+        val taskIntent = intent.getParcelableExtra<TaskDataClass>("task")
+        val edit = intent.getBooleanExtra("edit", false)
+        if (edit && taskIntent != null) {
+            binding.addTaskTitle.text = "Edit Task"
+            binding.taskTitle.setText(taskIntent.title)
+            binding.taskDescription.setText(taskIntent.description)
+
+            val timeStamp = taskIntent.timeStamp
+            binding.done.setOnClickListener {
+                val title = binding.taskTitle.text.toString()
+                val description = binding.taskDescription.text.toString()
+                val newTask = TaskDataClass(title, description, timeStamp)
+                databaseReference.child("Tasks").child(timeStamp.toString()).setValue(newTask)
+                finish()
+            }
+        } else {
+
+            // Set up the save button
+            binding.done.setOnClickListener {
+                val title = binding.taskTitle.text.toString()
+                val description = binding.taskDescription.text.toString()
+                val timeStamp = System.currentTimeMillis()
+                val task = TaskDataClass(title, description, timeStamp)
+                databaseReference.child("Tasks").child(timeStamp.toString()).setValue(task)
+                finish()
+            }
         }
     }
 }
