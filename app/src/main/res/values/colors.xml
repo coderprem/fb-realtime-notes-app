@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="rose">#F33A6A</color>
+    <color name="rose_light">#fbb</color>
+    <color name="ruby_red">#E0115F</color>
 </resources>
