@@ -40,12 +40,27 @@ class AddTask : AppCompatActivity() {
         // intent to get the task data
         val taskIntent = intent.getParcelableExtra<TaskDataClass>("task")
         val edit = intent.getBooleanExtra("edit", false)
+        val popupIntent = intent.getParcelableExtra<TaskDataClass>("popup")
+        val popup = intent.getBooleanExtra("popup", false)
         if (edit && taskIntent != null) {
             binding.addTaskTitle.text = "Edit Task"
             binding.taskTitle.setText(taskIntent.title)
             binding.taskDescription.setText(taskIntent.description)
 
             val timeStamp = taskIntent.timeStamp
+            binding.done.setOnClickListener {
+                val title = binding.taskTitle.text.toString()
+                val description = binding.taskDescription.text.toString()
+                val newTask = TaskDataClass(title, description, timeStamp)
+                databaseReference.child("Tasks").child(timeStamp.toString()).setValue(newTask)
+                finish()
+            }
+        } else if(popup && popupIntent != null) {
+            binding.addTaskTitle.text = "Edit Task"
+            binding.taskTitle.setText(popupIntent.title)
+            binding.taskDescription.setText(popupIntent.description)
+
+            val timeStamp = popupIntent.timeStamp
             binding.done.setOnClickListener {
                 val title = binding.taskTitle.text.toString()
                 val description = binding.taskDescription.text.toString()

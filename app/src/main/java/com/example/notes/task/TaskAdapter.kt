@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 import com.google.firebase.auth.FirebaseAuth
@@ -48,10 +49,11 @@ class TaskAdapter(private val tasks: List<TaskDataClass>): RecyclerView.Adapter<
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.title) {
                     "Edit" -> {
-                        // Open edit task screen
+                        // edit task
                         val intent = Intent(holder.moreButton.context, AddTask::class.java)
                         intent.putExtra("task", task)
-                        holder.moreButton.context.startActivity(intent)
+                        intent.putExtra("edit", true)
+                        startActivity(holder.moreButton.context, intent, null)
                     }
                     "Delete" -> {
                         // Delete task

@@ -12,6 +12,9 @@ import com.example.notes.task.AddTask
 import com.example.notes.task.TaskAdapter
 import com.example.notes.task.TaskDataClass
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -49,15 +52,52 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = taskAdapter
 
         // Get the tasks from the database
-        databaseReference.child("Tasks").get().addOnSuccessListener {
-            for (task in it.children) {
-                val taskData = task.getValue(TaskDataClass::class.java)
+//        databaseReference.child("Tasks").get().addOnSuccessListener {
+//            for (task in it.children) {
+//                val taskData = task.getValue(TaskDataClass::class.java)
+//                if (taskData != null) {
+//                    taskList.add(taskData)
+//                }
+//            }
+//            taskAdapter.notifyDataSetChanged()
+//        }
+
+        databaseReference.child("Tasks").addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val taskData = snapshot.getValue(TaskDataClass::class.java)
                 if (taskData != null) {
                     taskList.add(taskData)
+                    taskAdapter.notifyDataSetChanged()
                 }
             }
-            taskAdapter.notifyDataSetChanged()
-        }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val taskData = snapshot.getValue(TaskDataClass::class.java)
+                if (taskData != null) {
+                    val index = taskList.indexOfFirst { it.timeStamp == taskData.timeStamp }
+                    if (index != -1) {
+                        taskList[index] = taskData
+                        taskAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                val taskData = snapshot.getValue(TaskDataClass::class.java)
+                if (taskData != null) {
+                    taskList.remove(taskData)
+                    taskAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                // Not needed
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Not needed
+            }
+        })
 
         // add click listener on the recycler view
         taskAdapter.onItemClickListener = {
