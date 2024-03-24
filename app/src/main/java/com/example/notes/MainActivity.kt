@@ -2,6 +2,7 @@ package com.example.notes
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -51,6 +53,9 @@ class MainActivity : AppCompatActivity() {
         taskAdapter = TaskAdapter(taskList)
         recyclerView.adapter = taskAdapter
 
+        // empty image visibility
+        binding.emptyImage.visibility = if (taskList.isEmpty()) View.VISIBLE else View.GONE
+
         // Add a child event listener to the database reference
         databaseReference.child("Tasks").addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -58,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 if (taskData != null) {
                     taskList.add(taskData)
                     taskAdapter.notifyDataSetChanged()
+                    binding.emptyImage.visibility = if (taskList.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
 
@@ -77,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 if (taskData != null) {
                     taskList.remove(taskData)
                     taskAdapter.notifyDataSetChanged()
+                    binding.emptyImage.visibility = if (taskList.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
 
