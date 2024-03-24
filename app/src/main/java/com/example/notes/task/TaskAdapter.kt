@@ -12,6 +12,8 @@ import com.example.notes.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TaskAdapter(private val tasks: List<TaskDataClass>): RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
@@ -35,7 +37,8 @@ class TaskAdapter(private val tasks: List<TaskDataClass>): RecyclerView.Adapter<
         val task = tasks[position]
         holder.title.text = task.title
         holder.description.text = task.description
-        holder.timeStamp.text = task.timeStamp.toString()
+        val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        holder.timeStamp.text = formatter.format(task.timeStamp)
 
         holder.itemView.setOnClickListener {
             onItemClickListener?.invoke(task)
