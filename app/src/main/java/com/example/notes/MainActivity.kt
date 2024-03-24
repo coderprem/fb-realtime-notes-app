@@ -51,17 +51,7 @@ class MainActivity : AppCompatActivity() {
         taskAdapter = TaskAdapter(taskList)
         recyclerView.adapter = taskAdapter
 
-        // Get the tasks from the database
-//        databaseReference.child("Tasks").get().addOnSuccessListener {
-//            for (task in it.children) {
-//                val taskData = task.getValue(TaskDataClass::class.java)
-//                if (taskData != null) {
-//                    taskList.add(taskData)
-//                }
-//            }
-//            taskAdapter.notifyDataSetChanged()
-//        }
-
+        // Add a child event listener to the database reference
         databaseReference.child("Tasks").addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val taskData = snapshot.getValue(TaskDataClass::class.java)
@@ -114,5 +104,16 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddTask::class.java)
             startActivity(intent)
         }
+
+        // scroll listener for the recycler view
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    binding.addTask.shrink()
+                } else {
+                    binding.addTask.extend()
+                }
+            }
+        })
     }
 }
