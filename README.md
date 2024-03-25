@@ -39,8 +39,8 @@ This application helps you manage and organize your daily tasks efficiently.
 This is a basic structure for your Tasks app's README. You can further customize it by adding:
 
 * Screenshots of the app's UI.
-* ![1](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/8dc8702f-1a6f-4d1e-9af5-6d7dff9dace0)
-* ![2](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/01061bb8-cfb9-4809-a3db-3ef5551d0627)
+![1](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/8dc8702f-1a6f-4d1e-9af5-6d7dff9dace0)
+![2](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/01061bb8-cfb9-4809-a3db-3ef5551d0627)
 * Installation instructions for specific Android versions.
 * Contribution guidelines if you plan to open-source the app.
 * Links to any relevant libraries or dependencies used.
