@@ -42,8 +42,13 @@ This is a basic structure for your Tasks app's README. You can further customize
 ![1](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/8dc8702f-1a6f-4d1e-9af5-6d7dff9dace0)
 ![2](https://github.com/coderprem/fb-realtime-notes-app/assets/106749140/01061bb8-cfb9-4809-a3db-3ef5551d0627)
 * Installation instructions for specific Android versions.
-* Contribution guidelines if you plan to open-source the app.
-* Links to any relevant libraries or dependencies used.
+1. Clone the repository or download the APK file from the [releases page](https://github.com/coderprem/calculator).
+
+2. Transfer the APK file to your Android device if you downloaded it on your computer.
+
+3. On your Android device, locate the APK file and tap on it to begin the installation process.
+
+4. Follow the on-screen instructions to install the Notes App on your device.
 
 * ## Contact 📧
 
