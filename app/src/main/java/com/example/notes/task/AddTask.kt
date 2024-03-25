@@ -42,16 +42,18 @@ class AddTask : AppCompatActivity() {
         val edit = intent.getBooleanExtra("edit", false)
         val popupIntent = intent.getParcelableExtra<TaskDataClass>("popup")
         val popup = intent.getBooleanExtra("popup", false)
-        if (edit && taskIntent != null) {
+        if ((edit && taskIntent != null)) {
             binding.addTaskTitle.text = "Edit Task"
             binding.taskTitle.setText(taskIntent.title)
             binding.taskDescription.setText(taskIntent.description)
 
-            val timeStamp = taskIntent.timeStamp
+            val oldTimeStamp = taskIntent.timeStamp
             binding.done.setOnClickListener {
                 val title = binding.taskTitle.text.toString()
                 val description = binding.taskDescription.text.toString()
+                val timeStamp = System.currentTimeMillis()
                 val newTask = TaskDataClass(title, description, timeStamp)
+                databaseReference.child("Tasks").child(oldTimeStamp.toString()).removeValue()
                 databaseReference.child("Tasks").child(timeStamp.toString()).setValue(newTask)
                 finish()
             }
@@ -60,11 +62,13 @@ class AddTask : AppCompatActivity() {
             binding.taskTitle.setText(popupIntent.title)
             binding.taskDescription.setText(popupIntent.description)
 
-            val timeStamp = popupIntent.timeStamp
+            val oldTimeStamp = popupIntent.timeStamp
             binding.done.setOnClickListener {
                 val title = binding.taskTitle.text.toString()
                 val description = binding.taskDescription.text.toString()
+                val timeStamp = System.currentTimeMillis()
                 val newTask = TaskDataClass(title, description, timeStamp)
+                databaseReference.child("Tasks").child(oldTimeStamp.toString()).removeValue()
                 databaseReference.child("Tasks").child(timeStamp.toString()).setValue(newTask)
                 finish()
             }
