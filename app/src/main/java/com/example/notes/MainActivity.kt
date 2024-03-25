@@ -1,13 +1,16 @@
 package com.example.notes
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notes.authentication.SignUpActivity
 import com.example.notes.databinding.ActivityMainBinding
 import com.example.notes.task.AddTask
 import com.example.notes.task.TaskAdapter
@@ -27,7 +30,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var taskList: MutableList<TaskDataClass>
-
+    private var sortByAsc: Boolean = true
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedEdit: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -53,6 +58,11 @@ class MainActivity : AppCompatActivity() {
         taskAdapter = TaskAdapter(taskList)
         recyclerView.adapter = taskAdapter
 
+        // initialize the shared preferences
+        sharedPreferences = getSharedPreferences("Notes", MODE_PRIVATE)
+        sharedEdit = sharedPreferences.edit()
+        sortByAsc = sharedPreferences.getBoolean("sortByAsc", true)
+
         // empty image visibility
         binding.emptyImage.visibility = if (taskList.isEmpty()) View.VISIBLE else View.GONE
 
@@ -62,6 +72,10 @@ class MainActivity : AppCompatActivity() {
                 val taskData = snapshot.getValue(TaskDataClass::class.java)
                 if (taskData != null) {
                     taskList.add(taskData)
+                    if (!sortByAsc) {
+                        taskList.sortBy { it.timeStamp }
+                        taskList.reverse()
+                    }
                     taskAdapter.notifyDataSetChanged()
                     binding.emptyImage.visibility = if (taskList.isEmpty()) View.VISIBLE else View.GONE
                 }
@@ -122,5 +136,53 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        // Set up the more options button
+        binding.moreOptions.setOnClickListener {
+            // Show a popup menu, with options to sort in asc and desc, sign out, and delete all tasks
+            moreOptionPopupMenu()
+        }
+    }
+
+    private fun moreOptionPopupMenu() {
+        val popupMenu = PopupMenu(this, binding.moreOptions)
+        popupMenu.menu.add("Sort by ${toggleAscText()}")
+        popupMenu.menu.add("Sign Out")
+        popupMenu.menu.add("Delete All")
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.title) {
+                "Sort by ${toggleAscText()}" -> {
+                    // Sort the tasks
+                    sortByAsc = !sortByAsc
+                    sharedEdit.putBoolean("sortByAsc", sortByAsc)
+                    sharedEdit.apply()
+                    taskList.sortBy { it.timeStamp }
+                    if (!sortByAsc) {
+                        taskList.reverse()
+                    }
+                    taskAdapter.notifyDataSetChanged()
+                }
+                "Sign Out" -> {
+                    // Sign out the user
+                    firebaseAuth.signOut()
+                    val intent = Intent(this, SignUpActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                "Delete All" -> {
+                    // Delete all tasks
+                    databaseReference.child("Tasks").removeValue()
+                }
+            }
+            true
+        }
+        popupMenu.show()
+    }
+    private fun toggleAscText() :String {
+        return if (sortByAsc) {
+            "Desc"
+        } else {
+            "Asc"
+        }
     }
 }
