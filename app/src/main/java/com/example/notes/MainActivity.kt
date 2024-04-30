@@ -180,9 +180,9 @@ class MainActivity : AppCompatActivity() {
     }
     private fun toggleAscText() :String {
         return if (sortByAsc) {
-            "Desc"
+            "Newest First"
         } else {
-            "Asc"
+            "Oldest First"
         }
     }
 }
